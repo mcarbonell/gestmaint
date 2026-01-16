@@ -1,0 +1,144 @@
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useData } from '../../context/DataContext';
+import { ArrowLeft, Send, Calendar, User, Clock, FileText } from 'lucide-react';
+
+export default function IncidentDetail() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { incidents, updateIncident } = useData();
+    const { user } = useAuth();
+
+    const incident = incidents.find(i => i.id === id);
+    const [comment, setComment] = useState('');
+
+    if (!incident) return <div className="container">Incidencia no encontrada</div>;
+
+    const handleAddComment = (e) => {
+        e.preventDefault();
+        if (!comment.trim()) return;
+
+        updateIncident(incident.id, {}, user, comment); // Using the generic update to add history
+        setComment('');
+    };
+
+    const handleStatusChange = (newStatus) => {
+        updateIncident(incident.id, { status: newStatus }, user, `Cambio de estado a ${newStatus}`);
+    };
+
+    return (
+        <div className="container" style={{ maxWidth: '800px' }}>
+            <button
+                onClick={() => navigate(-1)}
+                className="btn btn-secondary"
+                style={{ marginBottom: '1rem', padding: '0.5rem 1rem' }}
+            >
+                <ArrowLeft size={16} /> Volver
+            </button>
+
+            <div className="card" style={{ marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                    <div>
+                        <span className="badge" style={{ marginBottom: '0.5rem', display: 'inline-block', backgroundColor: '#e2e8f0', color: '#475569' }}>
+                            #{incident.id}
+                        </span>
+                        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>{incident.type.toUpperCase()}</h1>
+                    </div>
+                    <span className="badge" style={{
+                        fontSize: '1rem',
+                        backgroundColor: incident.status === 'reported' ? '#fef3c7' : '#dbeafe',
+                        color: incident.status === 'reported' ? '#92400e' : '#1e40af'
+                    }}>
+                        {incident.status.toUpperCase()}
+                    </span>
+                </div>
+
+                {/* Share Action */}
+                <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+                    <a
+                        href={`https://wa.me/?text=${encodeURIComponent(`Hola, hay una incidencia: ${incident.type} - ${incident.description}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-secondary"
+                        style={{ color: '#25D366', borderColor: '#25D366', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                    >
+                        <Send size={16} /> Compartir por WhatsApp
+                    </a>
+                </div>
+
+                <div className="grid-2" style={{ marginBottom: '1.5rem', gap: '2rem' }}>
+                    <div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>Reportado por</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
+                            <User size={16} /> {incident.createdBy.name}
+                        </div>
+                    </div>
+                    <div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>Fecha</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
+                            <Calendar size={16} /> {new Date(incident.createdAt).toLocaleString()}
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{ marginBottom: '1.5rem' }}>
+                    <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Descripción</h3>
+                    <p style={{ lineHeight: 1.6, color: '#444' }}>{incident.description}</p>
+                </div>
+
+                {/* Controller Actions */}
+                {user.role === 'controller' && (
+                    <div style={{ borderTop: '1px solid #eee', paddingTop: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 600, alignSelf: 'center' }}>Cambiar Estado:</span>
+                        <button className="btn btn-secondary" onClick={() => handleStatusChange('in_progress')}>En Progreso</button>
+                        <button className="btn btn-secondary" onClick={() => handleStatusChange('finalized')}>Finalizar</button>
+                        <button className="btn btn-secondary" style={{ color: '#ef4444', borderColor: '#fee2e2' }} onClick={() => handleStatusChange('rejected')}>Descartar</button>
+                    </div>
+                )}
+            </div>
+
+            <div className="card">
+                <h2 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Clock size={20} /> Historial y Comentarios
+                </h2>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2rem' }}>
+                    {incident.history.map((log, index) => (
+                        <div key={index} style={{ display: 'flex', gap: '1rem' }}>
+                            <div style={{
+                                width: '32px', height: '32px', borderRadius: '50%',
+                                background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '0.8rem', fontWeight: 700, color: '#64748b'
+                            }}>
+                                {log.user.charAt(0)}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{log.user}</span>
+                                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{new Date(log.date).toLocaleString()}</span>
+                                </div>
+                                <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem', fontSize: '0.95rem' }}>
+                                    {log.details || log.action}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <form onSubmit={handleAddComment} style={{ display: 'flex', gap: '1rem' }}>
+                    <input
+                        type="text"
+                        placeholder="Añadir comentario o actualización..."
+                        value={comment}
+                        onChange={e => setComment(e.target.value)}
+                        style={{ flex: 1 }}
+                    />
+                    <button type="submit" className="btn btn-primary" disabled={!comment.trim()}>
+                        <Send size={18} />
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+}

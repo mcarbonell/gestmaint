@@ -1,0 +1,10 @@
+@import './styles/design-system.css';
+
+/* Global overrides */
+
+/* Ensure full height for app root */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
