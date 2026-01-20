@@ -1,65 +1,91 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  // Try to load user from localStorage for persistence across reloads
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('asvian_user');
-    return saved ? JSON.parse(saved) : null;
-  });
-
-  const [allUsers, setAllUsers] = useState(() => {
-    const saved = localStorage.getItem('asvian_all_users');
-    if (saved) return JSON.parse(saved);
-    return [
-      { id: 'admin', name: 'Gestoría Administrador', role: 'admin', email: 'admin@asvian.com' },
-      { id: 'controller', name: 'Jefe de Mantenimiento', role: 'controller', email: 'mantenimiento@asvian.com' },
-      { id: 'local1', name: 'ZARA Local 1', role: 'local', email: 'zara@asvian.com' },
-      { id: 'local2', name: 'H&M', role: 'local', email: 'hm@asvian.com' },
-    ];
-  });
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem('asvian_all_users', JSON.stringify(allUsers));
-  }, [allUsers]);
+    // Check active sessions and sets the user
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        await fetchProfile(session.user.id);
+      }
+      setLoading(false);
+    };
 
-  const login = (roleOrEmail) => {
-    const foundUser = allUsers.find(u => u.role === roleOrEmail || u.email === roleOrEmail);
-    if (foundUser) {
-      setUser(foundUser);
-      localStorage.setItem('asvian_user', JSON.stringify(foundUser));
+    getSession();
+
+    // Listen for changes on auth state
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session) {
+        await fetchProfile(session.user.id);
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (userId) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (data) {
+      setUser(data);
+    } else if (error) {
+      console.error('Error fetching profile:', error);
     }
   };
 
-  const addUser = (newUser) => {
-    const userWithId = { ...newUser, id: Math.random().toString(36).substr(2, 9) };
-    setAllUsers([...allUsers, userWithId]);
-    return userWithId;
+  const login = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    return data;
   };
 
-  const deleteUser = (id) => {
-    setAllUsers(allUsers.filter(u => u.id !== id));
-  };
-
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('asvian_user');
+  };
+
+  // For the demo, we keep these helper roles if needed, but the real logic is in login()
+  const loginAsDemo = async (identifier) => {
+    const demoRoles = {
+      admin: 'admin@asvian.com',
+      controller: 'mantenimiento@asvian.com',
+      local: 'zara@asvian.com'
+    };
+
+    const email = demoRoles[identifier] || identifier;
+    const password = 'gestmaint2026'; // All demo accounts use the same password
+
+    return await login(email, password);
   };
 
   return (
     <AuthContext.Provider value={{
       user,
-      allUsers,
+      loading,
       login,
+      loginAsDemo,
       logout,
-      addUser,
-      deleteUser,
       isAuthenticated: !!user
     }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

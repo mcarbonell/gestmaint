@@ -10,7 +10,8 @@ import {
     LogOut,
     Menu,
     X,
-    PlusCircle
+    PlusCircle,
+    HardHat
 } from 'lucide-react';
 import styles from './Layout.module.css'; // We'll create this next
 
@@ -62,7 +63,7 @@ export default function Layout() {
         <div className={styles.layout}>
             {/* Mobile Header */}
             <header className={styles.mobileHeader}>
-                <div className={styles.brand}>GestMaint</div>
+                <div className={styles.brand}>Parque Albán</div>
                 <button className={styles.menuBtn} onClick={toggleSidebar}>
                     {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
@@ -74,8 +75,24 @@ export default function Layout() {
             {/* Sidebar */}
             <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.open : ''}`}>
                 <div className={styles.sidebarHeader}>
-                    <div className={styles.logo}>GestMaint</div>
-                    <div className={styles.roleBadge}>{user?.role?.toUpperCase()}</div>
+                    <div className={styles.logo}>Parque Albán</div>
+                </div>
+
+                <div className={styles.userProfile}>
+                    <div className={styles.avatar}>
+                        {user?.full_name?.charAt(0) || 'U'}
+                    </div>
+                    <div className={styles.userInfo}>
+                        <div className={styles.userName}>{user?.full_name || 'Cargando...'}</div>
+                        <div className={styles.userRole}>{user?.role?.toUpperCase() || ''}</div>
+                    </div>
+                    <button
+                        className={styles.logoutBtn}
+                        onClick={logout}
+                        title="Cerrar sesión"
+                    >
+                        <LogOut size={20} />
+                    </button>
                 </div>
 
                 <nav className={styles.nav}>
@@ -92,15 +109,6 @@ export default function Layout() {
                     ))}
                 </nav>
 
-                <div className={styles.userProfile}>
-                    <img src={user?.avatar} alt="User" className={styles.avatar} />
-                    <div className={styles.userInfo}>
-                        <div className={styles.userName}>{user?.name}</div>
-                        <button onClick={handleLogout} className={styles.logoutBtn}>
-                            <LogOut size={16} /> Salir
-                        </button>
-                    </div>
-                </div>
             </aside>
 
             {/* Main Content */}

@@ -71,13 +71,13 @@ export default function IncidentDetail() {
                     <div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>Reportado por</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
-                            <User size={16} /> {incident.createdBy.name}
+                            <User size={16} /> {incident.profiles?.full_name || 'Desconocido'}
                         </div>
                     </div>
                     <div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>Fecha</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
-                            <Calendar size={16} /> {new Date(incident.createdAt).toLocaleString()}
+                            <ArrowLeft size={16} /> {new Date(incident.created_at).toLocaleString()}
                         </div>
                     </div>
                 </div>
@@ -104,14 +104,14 @@ export default function IncidentDetail() {
                 </h2>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2rem' }}>
-                    {incident.history.map((log, index) => (
+                    {incident.history?.map((log, index) => (
                         <div key={index} style={{ display: 'flex', gap: '1rem' }}>
                             <div style={{
                                 width: '32px', height: '32px', borderRadius: '50%',
                                 background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 fontSize: '0.8rem', fontWeight: 700, color: '#64748b'
                             }}>
-                                {log.user.charAt(0)}
+                                {log.user?.charAt(0) || 'S'}
                             </div>
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>

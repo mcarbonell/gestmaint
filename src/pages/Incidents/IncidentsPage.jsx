@@ -9,7 +9,7 @@ export default function IncidentsPage() {
     const navigate = useNavigate();
 
     const myIncidents = user.role === 'local'
-        ? incidents.filter(i => i.createdBy.id === user.id)
+        ? incidents.filter(i => i.created_by === user.id)
         : incidents;
 
     const getStatusColor = (status) => {
@@ -39,7 +39,7 @@ export default function IncidentsPage() {
                     {incident.priority.toUpperCase()}
                 </span>
                 <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-                    {new Date(incident.createdAt).toLocaleDateString()}
+                    {new Date(incident.created_at).toLocaleDateString()}
                 </span>
             </div>
             <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>{incident.type.toUpperCase()}</h3>
