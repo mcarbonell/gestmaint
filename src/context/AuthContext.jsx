@@ -11,17 +11,37 @@ export const AuthProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : null;
   });
 
-  const login = (role) => {
-    // Mock user data based on role
-    const mockUser = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: role === 'admin' ? 'Sr. Gestor' : role === 'controller' ? 'Jefe de Mantenimiento' : 'ZARA Local 1',
-      role: role,
-      avatar: `https://ui-avatars.com/api/?name=${role}&background=random`
-    };
-    
-    setUser(mockUser);
-    localStorage.setItem('asvian_user', JSON.stringify(mockUser));
+  const [allUsers, setAllUsers] = useState(() => {
+    const saved = localStorage.getItem('asvian_all_users');
+    if (saved) return JSON.parse(saved);
+    return [
+      { id: 'admin', name: 'Gestoría Administrador', role: 'admin', email: 'admin@asvian.com' },
+      { id: 'controller', name: 'Jefe de Mantenimiento', role: 'controller', email: 'mantenimiento@asvian.com' },
+      { id: 'local1', name: 'ZARA Local 1', role: 'local', email: 'zara@asvian.com' },
+      { id: 'local2', name: 'H&M', role: 'local', email: 'hm@asvian.com' },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('asvian_all_users', JSON.stringify(allUsers));
+  }, [allUsers]);
+
+  const login = (roleOrEmail) => {
+    const foundUser = allUsers.find(u => u.role === roleOrEmail || u.email === roleOrEmail);
+    if (foundUser) {
+      setUser(foundUser);
+      localStorage.setItem('asvian_user', JSON.stringify(foundUser));
+    }
+  };
+
+  const addUser = (newUser) => {
+    const userWithId = { ...newUser, id: Math.random().toString(36).substr(2, 9) };
+    setAllUsers([...allUsers, userWithId]);
+    return userWithId;
+  };
+
+  const deleteUser = (id) => {
+    setAllUsers(allUsers.filter(u => u.id !== id));
   };
 
   const logout = () => {
@@ -30,7 +50,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{
+      user,
+      allUsers,
+      login,
+      logout,
+      addUser,
+      deleteUser,
+      isAuthenticated: !!user
+    }}>
       {children}
     </AuthContext.Provider>
   );

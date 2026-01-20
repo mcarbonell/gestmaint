@@ -8,6 +8,7 @@ import IncidentsPage from './pages/Incidents/IncidentsPage';
 import IncidentForm from './components/incidents/IncidentForm';
 import IncidentDetail from './pages/Incidents/IncidentDetail';
 import ContactsPage from './pages/Contacts/ContactsPage';
+import UserManagement from './pages/Admin/UserManagement';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -32,7 +33,7 @@ function AppRoutes() {
         <Route path="incidents/:id" element={<IncidentDetail />} />
         <Route path="my-incidents" element={<Navigate to="/incidents" replace />} />
         <Route path="contacts" element={<ContactsPage />} />
-        <Route path="users" element={<div className="card">Gestión de Usuarios (Próximamente)</div>} />
+        <Route path="users" element={<UserManagement />} />
         <Route path="settings" element={<div className="card">Configuración (Próximamente)</div>} />
 
         <Route path="*" element={<Navigate to="/" />} />

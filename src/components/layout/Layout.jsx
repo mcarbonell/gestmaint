@@ -1,7 +1,17 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Menu, X, Home, HardHat, ClipboardList, Users, LogOut, Settings } from 'lucide-react';
+import {
+    Home,
+    ClipboardList,
+    Users,
+    Phone,
+    Settings,
+    LogOut,
+    Menu,
+    X,
+    PlusCircle
+} from 'lucide-react';
 import styles from './Layout.module.css'; // We'll create this next
 
 export default function Layout() {
@@ -39,6 +49,8 @@ export default function Layout() {
             return [
                 ...common,
                 { icon: Users, label: 'Usuarios', to: '/users' },
+                { icon: ClipboardList, label: 'Incidencias', to: '/incidents' },
+                { icon: Phone, label: 'Agenda / Técnicos', to: '/contacts' },
                 { icon: Settings, label: 'Configuración', to: '/settings' },
             ];
         }

@@ -1,16 +1,18 @@
 import { useAuth } from '../../context/AuthContext';
+import { useData } from '../../context/DataContext';
 import { PlusCircle, AlertTriangle, Clock, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
     const { user } = useAuth();
+    const { incidents } = useData();
     const navigate = useNavigate();
 
-    // Mock stats
+    // Dynamic stats
     const stats = {
-        pending: 3,
-        active: 5,
-        completed: 12
+        pending: incidents.filter(i => ['reported', 'assigned'].includes(i.status)).length,
+        active: incidents.filter(i => i.status === 'in_progress').length,
+        completed: incidents.filter(i => i.status === 'finalized').length
     };
 
     if (!user) return null;
@@ -110,7 +112,11 @@ export default function Dashboard() {
                             <div style={{ fontWeight: 600 }}>Tubería rota - Local 4</div>
                             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Reportado hace 10 min por Zara</div>
                         </div>
-                        <button className="btn btn-secondary" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>
+                        <button
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
+                            onClick={() => navigate('/incidents/DEMO-001')}
+                        >
                             Revisar
                         </button>
                     </div>
@@ -123,7 +129,11 @@ export default function Dashboard() {
                             <div style={{ fontWeight: 600 }}>Aire acondicionado ruidoso</div>
                             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Pendiente de asignación</div>
                         </div>
-                        <button className="btn btn-secondary" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>
+                        <button
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
+                            onClick={() => navigate('/incidents/DEMO-002')}
+                        >
                             Asignar
                         </button>
                     </div>
