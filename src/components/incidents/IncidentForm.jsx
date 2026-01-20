@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
-import { Upload, Save, X } from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient';
+import { Upload, Save, X, Paperclip, FileText, Image as ImageIcon } from 'lucide-react';
 
 export default function IncidentForm() {
     const { addIncident } = useData();
@@ -10,23 +11,59 @@ export default function IncidentForm() {
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const [formData, setFormData] = useState({
         type: 'electricidad',
         priority: 'media',
         description: '',
-        files: []
     });
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        setSelectedFiles(prev => [...prev, ...files]);
+    };
+
+    const removeFile = (index) => {
+        setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        // Simulate API delay
-        setTimeout(() => {
-            addIncident(formData, user);
+        try {
+            const uploadedFiles = [];
+
+            // 1. Upload files to Supabase Storage
+            for (const file of selectedFiles) {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Math.random()}-${Date.now()}.${fileExt}`;
+                const filePath = `${user.id}/${fileName}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('incidents')
+                    .upload(filePath, file);
+
+                if (uploadError) throw uploadError;
+
+                // Create a record for this file
+                uploadedFiles.push({
+                    name: file.name,
+                    path: filePath,
+                    type: file.type
+                });
+            }
+
+            // 2. Add incident with file references
+            await addIncident({ ...formData, files: uploadedFiles }, user);
+
+            navigate('/incidents');
+        } catch (err) {
+            console.error('Error creating incident:', err);
+            alert('Error al guardar la incidencia: ' + (err.message || 'Error desconocido'));
+        } finally {
             setLoading(false);
-            navigate('/incidents'); // Or dashboard
-        }, 800);
+        }
     };
 
     const categories = [
@@ -104,7 +141,9 @@ export default function IncidentForm() {
 
                 <div style={{ marginBottom: '2rem' }}>
                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Adjuntar Fotos / Documentos</label>
+
                     <div
+                        onClick={() => document.getElementById('fileInput').click()}
                         style={{
                             border: '2px dashed #cbd5e1',
                             borderRadius: 'var(--radius-md)',
@@ -112,13 +151,50 @@ export default function IncidentForm() {
                             textAlign: 'center',
                             backgroundColor: '#f8fafc',
                             color: 'var(--text-muted)',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            marginBottom: '1rem'
                         }}
                     >
                         <Upload size={32} style={{ marginBottom: '0.5rem', opacity: 0.5 }} />
-                        <p>Haga clic para subir archivos</p>
-                        <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>(Simulación)</p>
+                        <p style={{ fontWeight: 500 }}>Haga clic para subir archivos</p>
+                        <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>Máximo 5MB por archivo</p>
+                        <input
+                            id="fileInput"
+                            type="file"
+                            multiple
+                            onChange={handleFileChange}
+                            style={{ display: 'none' }}
+                        />
                     </div>
+
+                    {selectedFiles.length > 0 && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            {selectedFiles.map((file, index) => (
+                                <div key={index} style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem',
+                                    padding: '0.75rem',
+                                    background: 'white',
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '0.5rem'
+                                }}>
+                                    {file.type.startsWith('image/') ? <ImageIcon size={18} /> : <FileText size={18} />}
+                                    <span style={{ flex: 1, fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {file.name}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeFile(index)}
+                                        style={{ border: 'none', background: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                                    >
+                                        <X size={18} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <button

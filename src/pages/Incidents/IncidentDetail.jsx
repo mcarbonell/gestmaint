@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
-import { ArrowLeft, Send, Calendar, User, Clock, FileText } from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient';
+import { ArrowLeft, Send, Calendar, User, Clock, FileText, Image as ImageIcon, Download } from 'lucide-react';
 
 export default function IncidentDetail() {
     const { id } = useParams();
@@ -86,6 +87,58 @@ export default function IncidentDetail() {
                     <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Descripción</h3>
                     <p style={{ lineHeight: 1.6, color: '#444' }}>{incident.description}</p>
                 </div>
+
+                {incident.files && incident.files.length > 0 && (
+                    <div style={{ marginBottom: '1.5rem', borderTop: '1px solid #eee', paddingTop: '1rem' }}>
+                        <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <FileText size={18} /> Adjuntos ({incident.files.length})
+                        </h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                            {incident.files.map((file, index) => {
+                                const { data: { publicUrl } } = supabase.storage.from('incidents').getPublicUrl(file.path);
+                                const isImage = file.type?.startsWith('image/');
+
+                                return (
+                                    <div key={index} style={{
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '0.5rem',
+                                        overflow: 'hidden',
+                                        background: '#f8fafc'
+                                    }}>
+                                        {isImage ? (
+                                            <div style={{ height: '120px', overflow: 'hidden' }}>
+                                                <img
+                                                    src={publicUrl}
+                                                    alt={file.name}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f1f5f9', color: '#64748b' }}>
+                                                <FileText size={40} />
+                                            </div>
+                                        )}
+                                        <div style={{ padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <span style={{ fontSize: '0.8rem', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: '0.5rem' }}>
+                                                {file.name}
+                                            </span>
+                                            <a
+                                                href={publicUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn btn-secondary"
+                                                style={{ padding: '0.25rem', borderRadius: '4px' }}
+                                                title="Descargar"
+                                            >
+                                                <Download size={14} />
+                                            </a>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
 
                 {/* Controller Actions */}
                 {user.role === 'controller' && (
