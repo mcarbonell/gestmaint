@@ -10,13 +10,24 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Failsafe: ensure loading is set to false even if Supabase/Network is slow
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
     // Check active sessions and sets the user
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await fetchProfile(session.user.id);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await fetchProfile(session.user.id);
+        }
+      } catch (err) {
+        console.error('Error getting session:', err);
+      } finally {
+        setLoading(false);
+        clearTimeout(timeout);
       }
-      setLoading(false);
     };
 
     getSession();

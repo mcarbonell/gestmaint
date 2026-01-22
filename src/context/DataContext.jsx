@@ -16,6 +16,8 @@ export const DataProvider = ({ children }) => {
         if (user) {
             fetchIncidents();
             fetchContacts();
+        } else {
+            setLoading(false);
         }
     }, [user]);
 
