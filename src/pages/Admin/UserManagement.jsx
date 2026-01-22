@@ -56,7 +56,7 @@ export default function UserManagement() {
                 <div className="card" style={{ marginBottom: '2rem', border: '1px solid #e2e8f0' }}>
                     <h3 style={{ marginBottom: '0.5rem' }}>Aviso Importante</h3>
                     <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                        Para crear nuevos accesos reales, por ahora debes usar el panel de <b>Supabase > Authentication > Users</b>.
+                        Para crear nuevos accesos reales, por ahora debes usar el panel de <b>Supabase - Authentication - Users</b>.
                         Una vez creado el usuario en Auth, se debe insertar su perfil en la tabla <code>profiles</code> con el mismo ID.
                     </p>
                     <button className="btn btn-secondary" style={{ marginTop: '1rem' }} onClick={() => setShowNewUser(false)}>Cerrar</button>

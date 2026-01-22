@@ -28,3 +28,7 @@ dist-ssr
 .env.local
 seed_supabase.js
 supabase_rls.sql
+
+# Documentation
+docs
+docs/*
