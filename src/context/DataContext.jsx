@@ -1,19 +1,23 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { useAuth } from './AuthContext';
 
 const DataContext = createContext();
 
 export const useData = () => useContext(DataContext);
 
 export const DataProvider = ({ children }) => {
+    const { user } = useAuth();
     const [incidents, setIncidents] = useState([]);
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchIncidents();
-        fetchContacts();
-    }, []);
+        if (user) {
+            fetchIncidents();
+            fetchContacts();
+        }
+    }, [user]);
 
     const fetchIncidents = async () => {
         const { data, error } = await supabase
