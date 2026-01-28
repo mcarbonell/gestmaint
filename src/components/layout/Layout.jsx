@@ -75,7 +75,10 @@ export default function Layout() {
             {/* Sidebar */}
             <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.open : ''}`}>
                 <div className={styles.sidebarHeader}>
-                    <div className={styles.logo}>Parque Albán</div>
+                    <div className={styles.logo}>ASVIAN</div>
+                    <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 800, letterSpacing: '0.1em', marginTop: '0.25rem' }}>
+                        GESTIÓN TÉCNICA
+                    </div>
                 </div>
 
                 <div className={styles.userProfile}>
