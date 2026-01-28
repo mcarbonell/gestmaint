@@ -36,7 +36,7 @@ serve(async (req) => {
                 'Authorization': `Bearer ${RESEND_API_KEY}`,
             },
             body: JSON.stringify({
-                from: 'GestMaint ASVIAN <incidencias@asvian.es>',
+                from: 'GestMaint ASVIAN <incidencias@batxoqueta.com>',
                 to: [recipientEmail],
                 subject: `[${priority}] Nueva Incidencia: ${category}`,
                 html: `
