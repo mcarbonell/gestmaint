@@ -36,25 +36,54 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api/],
+        // Excluir rutas que no deben usar el fallback de navegación
+        navigateFallbackDenylist: [
+          /^\/api/,
+          /^\/auth/,
+          /^\/login/,
+          /supabase/,
+        ],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
         runtimeCaching: [
+          // IMPORTANTE: Nunca cachear peticiones a Supabase
+          {
+            urlPattern: ({ url }) => url.hostname.includes('supabase'),
+            handler: 'NetworkOnly',
+          },
+          // Navegación: siempre intentar red primero, con timeout corto
           {
             urlPattern: ({ request }) => request.mode === 'navigate',
             handler: 'NetworkFirst',
             options: {
               cacheName: 'pages-cache',
+              networkTimeoutSeconds: 3,
               expiration: {
                 maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24, // 1 día
+              },
+            },
+          },
+          // Assets estáticos: caché primero
+          {
+            urlPattern: ({ request }) =>
+              request.destination === 'style' ||
+              request.destination === 'script' ||
+              request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'static-assets',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 días
               },
             },
           }
         ]
       },
       devOptions: {
-        enabled: true,
+        enabled: false, // SW DESACTIVADO en desarrollo - causa conflictos con HMR
         type: 'module'
       }
     })
