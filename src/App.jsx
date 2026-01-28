@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import Layout from './components/layout/Layout';
@@ -12,7 +13,16 @@ import UserManagement from './pages/Admin/UserManagement';
 import SettingsPage from './pages/Settings/SettingsPage';
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#f8fafc' }}>
+        <Loader2 className="spinner" size={48} color="var(--color-primary)" />
+      </div>
+    );
+  }
+
   if (!isAuthenticated) return <Navigate to="/login" />;
   return children;
 };

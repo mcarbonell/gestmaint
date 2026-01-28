@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { KeyRound, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
-    const { login } = useAuth();
+    const { login, isAuthenticated, loading: authLoading } = useAuth();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -12,6 +12,13 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // If already authenticated, go home
+    useEffect(() => {
+        if (isAuthenticated && !authLoading) {
+            navigate('/', { replace: true });
+        }
+    }, [isAuthenticated, authLoading, navigate]);
 
     useEffect(() => {
         const savedEmail = localStorage.getItem('asvian_remembered_email');
@@ -35,11 +42,18 @@ export default function LoginPage() {
                 localStorage.removeItem('asvian_remembered_email');
             }
 
-            navigate('/');
+            // Navigation will be handled by the useEffect above
         } catch (err) {
-            setError(err.message === 'Invalid login credentials'
-                ? 'Email o contraseña incorrectos.'
-                : 'Error al iniciar sesión: ' + err.message);
+            console.error('Login error:', err);
+            if (err.message === 'Invalid login credentials') {
+                setError('Email o contraseña incorrectos.');
+            } else if (err.message === 'Profile not found') {
+                setError('Usuario autenticado pero sin perfil configurado. Contacte soporte.');
+            } else if (err.message.includes('fetch')) {
+                setError('Error de conexión. Verifique su internet.');
+            } else {
+                setError('Error al iniciar sesión: ' + err.message);
+            }
         } finally {
             setLoading(false);
         }

@@ -10,23 +10,22 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Failsafe: ensure loading is set to false even if Supabase/Network is slow
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    let mounted = true;
 
     // Check active sessions and sets the user
     const getSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) throw sessionError;
+
+        if (session && mounted) {
           await fetchProfile(session.user.id);
         }
       } catch (err) {
         console.error('Error getting session:', err);
       } finally {
-        setLoading(false);
-        clearTimeout(timeout);
+        if (mounted) setLoading(false);
       }
     };
 
@@ -34,15 +33,26 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for changes on auth state
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
+
+      setLoading(true);
       if (session) {
-        await fetchProfile(session.user.id);
+        try {
+          await fetchProfile(session.user.id);
+        } catch (err) {
+          console.error('Auth state change profile fetch error:', err);
+          setUser(null);
+        }
       } else {
         setUser(null);
       }
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const fetchProfile = async (userId) => {
@@ -52,11 +62,17 @@ export const AuthProvider = ({ children }) => {
       .eq('id', userId)
       .single();
 
+    if (error) {
+      console.error('Error fetching profile:', error);
+      throw error;
+    }
+
     if (data) {
       setUser(data);
-    } else if (error) {
-      console.error('Error fetching profile:', error);
+      return data;
     }
+
+    throw new Error('Profile not found');
   };
 
   const login = async (email, password) => {
