@@ -12,6 +12,14 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let mounted = true;
 
+    // Failsafe: force loading to false after 8 seconds to avoid white screen on slow networks
+    const timeout = setTimeout(() => {
+      if (mounted) {
+        console.warn('Auth loading timeout reached - forcing state');
+        setLoading(false);
+      }
+    }, 8000);
+
     // Check active sessions and sets the user
     const getSession = async () => {
       try {
@@ -25,7 +33,10 @@ export const AuthProvider = ({ children }) => {
       } catch (err) {
         console.error('Error getting session:', err);
       } finally {
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setLoading(false);
+          clearTimeout(timeout);
+        }
       }
     };
 

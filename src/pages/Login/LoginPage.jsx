@@ -12,6 +12,17 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [isSlow, setIsSlow] = useState(false);
+
+    // Monitor for slow initial load
+    useEffect(() => {
+        if (authLoading) {
+            const timer = setTimeout(() => setIsSlow(true), 3000);
+            return () => clearTimeout(timer);
+        } else {
+            setIsSlow(false);
+        }
+    }, [authLoading]);
 
     // If already authenticated, go home
     useEffect(() => {
@@ -93,6 +104,25 @@ export default function LoginPage() {
                     <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: '#1e293b' }}>ASVIAN</h1>
                     <p style={{ color: '#64748b', fontWeight: 500 }}>Gestión de Mantenimiento</p>
                 </div>
+
+                {(isSlow && authLoading) && (
+                    <div style={{
+                        background: '#fffbeb',
+                        color: '#92400e',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.75rem',
+                        marginBottom: '1.5rem',
+                        fontSize: '0.85rem',
+                        textAlign: 'center',
+                        border: '1px solid #fef3c7',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                    }}>
+                        <Loader2 className="spinner" size={16} />
+                        La conexión es lenta. Espere un momento...
+                    </div>
+                )}
 
                 {error && (
                     <div style={{
