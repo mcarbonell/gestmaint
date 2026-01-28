@@ -23,6 +23,19 @@ export default function UserManagement() {
         setLoading(false);
     };
 
+    const updateRole = async (id, newRole) => {
+        const { error } = await supabase
+            .from('profiles')
+            .update({ role: newRole })
+            .eq('id', id);
+
+        if (!error) {
+            setProfiles(profiles.map(p => p.id === id ? { ...p, role: newRole } : p));
+        } else {
+            alert('Error al actualizar el rol: ' + error.message);
+        }
+    };
+
     const deleteProfile = async (id) => {
         if (!confirm('¿Estás seguro de eliminar este perfil? El usuario de Auth seguirá existiendo.')) return;
 
@@ -84,19 +97,24 @@ export default function UserManagement() {
                                     <td style={{ padding: '1rem', fontWeight: 500 }}>{u.full_name}</td>
                                     <td style={{ padding: '1rem', color: 'var(--text-muted)' }}>{u.email}</td>
                                     <td style={{ padding: '1rem' }}>
-                                        <span style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '0.5rem',
-                                            fontSize: '0.85rem',
-                                            background: u.role === 'admin' ? '#fee2e2' : (u.role === 'controller' ? '#dbeafe' : '#f1f5f9'),
-                                            color: u.role === 'admin' ? '#991b1b' : (u.role === 'controller' ? '#1e40af' : '#475569'),
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '1rem'
-                                        }}>
-                                            {getRoleIcon(u.role)}
-                                            {u.role === 'admin' ? 'Gestoría' : (u.role === 'controller' ? 'Mant.' : 'Local')}
-                                        </span>
+                                        <select
+                                            value={u.role}
+                                            onChange={(e) => updateRole(u.id, e.target.value)}
+                                            style={{
+                                                fontSize: '0.85rem',
+                                                background: u.role === 'admin' ? '#fee2e2' : (u.role === 'controller' ? '#dbeafe' : '#f1f5f9'),
+                                                color: u.role === 'admin' ? '#991b1b' : (u.role === 'controller' ? '#1e40af' : '#475569'),
+                                                padding: '0.25rem 0.5rem',
+                                                borderRadius: '0.5rem',
+                                                border: 'none',
+                                                fontWeight: 600,
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <option value="admin">Gestoría (Admin)</option>
+                                            <option value="controller">Mantenimiento</option>
+                                            <option value="local">Local</option>
+                                        </select>
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'right' }}>
                                         <button

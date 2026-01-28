@@ -73,6 +73,20 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateProfile = async (updates) => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', user.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    if (data) setUser(data);
+    return data;
+  };
+
   // For the demo, we keep these helper roles if needed, but the real logic is in login()
   const loginAsDemo = async (identifier) => {
     const demoRoles = {
@@ -94,6 +108,7 @@ export const AuthProvider = ({ children }) => {
       login,
       loginAsDemo,
       logout,
+      updateProfile,
       isAuthenticated: !!user
     }}>
       {!loading && children}
