@@ -101,6 +101,13 @@ export const AuthProvider = ({ children }) => {
     return await login(email, password);
   };
 
+  const resetPassword = async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/login',
+    });
+    if (error) throw error;
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -109,6 +116,7 @@ export const AuthProvider = ({ children }) => {
       loginAsDemo,
       logout,
       updateProfile,
+      resetPassword,
       isAuthenticated: !!user
     }}>
       {!loading && children}
