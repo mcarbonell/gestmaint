@@ -26,7 +26,8 @@ serve(async (req) => {
 
         // Nota: Por ahora usamos un email fijo de destino. 
         // En el futuro podemos buscar el email del técnico asignado en la DB.
-        const recipientEmail = 'mantenimiento@asvian.com'
+        // const recipientEmail = 'mantenimiento@asvian.es'
+        const recipientEmail = 'marioraulcarbonell@gmail.com'
 
         const res = await fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -35,7 +36,7 @@ serve(async (req) => {
                 'Authorization': `Bearer ${RESEND_API_KEY}`,
             },
             body: JSON.stringify({
-                from: 'GestMaint ASVIAN <incidencias@asvian.com>',
+                from: 'GestMaint ASVIAN <incidencias@asvian.es>',
                 to: [recipientEmail],
                 subject: `[${priority}] Nueva Incidencia: ${category}`,
                 html: `
