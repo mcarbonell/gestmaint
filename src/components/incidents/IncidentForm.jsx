@@ -79,6 +79,22 @@ export default function IncidentForm() {
             </div>
 
             <form onSubmit={handleSubmit} className="card">
+                <div style={{
+                    padding: '0.75rem 1rem',
+                    background: '#f0f9ff',
+                    border: '1px solid #e0f2fe',
+                    borderRadius: '0.75rem',
+                    marginBottom: '1.5rem',
+                    fontSize: '0.85rem',
+                    color: '#0369a1',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem'
+                }}>
+                    <div style={{ width: '8px', height: '8px', background: '#0ea5e9', borderRadius: '50%' }}></div>
+                    <span>Al registrar la incidencia, se enviará una notificación automática al servicio técnico.</span>
+                </div>
+
                 <div style={{ marginBottom: '1.5rem' }}>
                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Tipo de Incidencia</label>
                     <select
