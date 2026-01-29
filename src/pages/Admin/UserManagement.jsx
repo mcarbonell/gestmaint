@@ -58,7 +58,7 @@ export default function UserManagement() {
 
     return (
         <div className="container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Gestión de Usuarios</h1>
                 <button className="btn btn-primary" onClick={() => setShowNewUser(true)}>
                     <UserPlus size={20} /> Crear en Auth
@@ -81,22 +81,74 @@ export default function UserManagement() {
                     <Loader2 className="spinner" size={32} />
                 </div>
             ) : (
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                            <tr>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>Usuario</th>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>Email</th>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>Rol</th>
-                                <th style={{ padding: '1rem', textAlign: 'right', fontWeight: 600 }}>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <>
+                    {/* Desktop Table View */}
+                    <div className="card desktop-only" style={{ padding: 0, overflow: 'hidden' }}>
+                        <div className="table-responsive">
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                                    <tr>
+                                        <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>Usuario</th>
+                                        <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>Email</th>
+                                        <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>Rol</th>
+                                        <th style={{ padding: '1rem', textAlign: 'right', fontWeight: 600 }}>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {profiles.map(u => (
+                                        <tr key={u.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                            <td style={{ padding: '1rem', fontWeight: 500 }}>{u.full_name}</td>
+                                            <td style={{ padding: '1rem', color: 'var(--text-muted)' }}>{u.email}</td>
+                                            <td style={{ padding: '1rem' }}>
+                                                <select
+                                                    value={u.role}
+                                                    onChange={(e) => updateRole(u.id, e.target.value)}
+                                                    style={{
+                                                        fontSize: '0.85rem',
+                                                        background: u.role === 'admin' ? '#fee2e2' : (u.role === 'controller' ? '#dbeafe' : '#f1f5f9'),
+                                                        color: u.role === 'admin' ? '#991b1b' : (u.role === 'controller' ? '#1e40af' : '#475569'),
+                                                        padding: '0.25rem 0.5rem',
+                                                        borderRadius: '0.5rem',
+                                                        border: 'none',
+                                                        fontWeight: 600,
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <option value="admin">Gestoría (Admin)</option>
+                                                    <option value="controller">Mantenimiento</option>
+                                                    <option value="local">Local</option>
+                                                </select>
+                                            </td>
+                                            <td style={{ padding: '1rem', textAlign: 'right' }}>
+                                                <button
+                                                    onClick={() => deleteProfile(u.id)}
+                                                    style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem' }}
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="mobile-only" style={{ display: 'none' }}>
+                        <div className="table-cards">
                             {profiles.map(u => (
-                                <tr key={u.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                    <td style={{ padding: '1rem', fontWeight: 500 }}>{u.full_name}</td>
-                                    <td style={{ padding: '1rem', color: 'var(--text-muted)' }}>{u.email}</td>
-                                    <td style={{ padding: '1rem' }}>
+                                <div key={u.id} className="table-card">
+                                    <div className="table-card-row">
+                                        <span className="table-card-label">Usuario</span>
+                                        <span className="table-card-value" style={{ fontWeight: 600 }}>{u.full_name}</span>
+                                    </div>
+                                    <div className="table-card-row">
+                                        <span className="table-card-label">Email</span>
+                                        <span className="table-card-value" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{u.email}</span>
+                                    </div>
+                                    <div className="table-card-row">
+                                        <span className="table-card-label">Rol</span>
                                         <select
                                             value={u.role}
                                             onChange={(e) => updateRole(u.id, e.target.value)}
@@ -115,20 +167,21 @@ export default function UserManagement() {
                                             <option value="controller">Mantenimiento</option>
                                             <option value="local">Local</option>
                                         </select>
-                                    </td>
-                                    <td style={{ padding: '1rem', textAlign: 'right' }}>
+                                    </div>
+                                    <div className="table-card-row">
+                                        <span className="table-card-label">Acciones</span>
                                         <button
                                             onClick={() => deleteProfile(u.id)}
                                             style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem' }}
                                         >
                                             <Trash2 size={18} />
                                         </button>
-                                    </td>
-                                </tr>
+                                    </div>
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
-                </div>
+                        </div>
+                    </div>
+                </>
             )}
         </div>
     );

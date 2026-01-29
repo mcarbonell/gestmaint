@@ -76,41 +76,41 @@ export default function IncidentsPage() {
 
         return (
             <div className="container" style={{ height: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Tablero de Control</h1>
                     <button className="btn btn-secondary"><Filter size={18} /> Filtros</button>
                 </div>
 
-                <div className="grid-3" style={{ flex: 1, minHeight: 0, gap: '1.5rem' }}>
+                <div className="grid-3 kanban-board" style={{ flex: 1, minHeight: 0, gap: '1.5rem' }}>
                     {/* Column 1: Pendientes */}
-                    <div style={{ background: '#f1f5f9', padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column' }}>
+                    <div className="kanban-column" style={{ background: '#f1f5f9', padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
                         <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
                             <AlertTriangle size={20} color="#f59e0b" /> Pendientes
                             <span style={{ background: '#e2e8f0', padding: '0.1rem 0.5rem', borderRadius: '1rem', fontSize: '0.8rem' }}>{columns.pending.length}</span>
                         </h3>
-                        <div style={{ flex: 1, overflowY: 'auto' }}>
+                        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
                             {columns.pending.map(inc => <IncidentCard key={inc.id} incident={inc} />)}
                         </div>
                     </div>
 
                     {/* Column 2: En Progreso */}
-                    <div style={{ background: '#f1f5f9', padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column' }}>
+                    <div className="kanban-column" style={{ background: '#f1f5f9', padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
                         <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
                             <Clock size={20} color="#3b82f6" /> En Progreso
                             <span style={{ background: '#e2e8f0', padding: '0.1rem 0.5rem', borderRadius: '1rem', fontSize: '0.8rem' }}>{columns.progress.length}</span>
                         </h3>
-                        <div style={{ flex: 1, overflowY: 'auto' }}>
+                        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
                             {columns.progress.map(inc => <IncidentCard key={inc.id} incident={inc} />)}
                         </div>
                     </div>
 
                     {/* Column 3: Finalizadas */}
-                    <div style={{ background: '#f1f5f9', padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column' }}>
+                    <div className="kanban-column" style={{ background: '#f1f5f9', padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
                         <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
                             <CheckCircle size={20} color="#10b981" /> Finalizadas
                             <span style={{ background: '#e2e8f0', padding: '0.1rem 0.5rem', borderRadius: '1rem', fontSize: '0.8rem' }}>{columns.done.length}</span>
                         </h3>
-                        <div style={{ flex: 1, overflowY: 'auto' }}>
+                        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
                             {columns.done.map(inc => <IncidentCard key={inc.id} incident={inc} />)}
                         </div>
                     </div>
@@ -122,7 +122,7 @@ export default function IncidentsPage() {
     // Local View
     return (
         <div className="container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Mis Incidencias</h1>
                 <button className="btn btn-primary" onClick={() => navigate('/incidents/new')}>
                     <Plus size={20} /> Nueva

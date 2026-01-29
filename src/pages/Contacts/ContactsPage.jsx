@@ -26,7 +26,7 @@ export default function ContactsPage() {
 
     return (
         <div className="container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Agenda de Especialistas</h1>
                 {canManage && (
                     <button className="btn btn-primary" onClick={() => setShowNewContact(true)}>
@@ -81,24 +81,26 @@ export default function ContactsPage() {
                 />
             </div>
 
-            <div className="grid-2">
+            <div className="grid-2 contact-grid">
                 {filteredContacts.map(contact => (
-                    <div key={contact.id} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{
+                    <div key={contact.id} className="card contact-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div className="contact-icon" style={{
                             width: '50px', height: '50px', borderRadius: '50%',
                             background: '#e0f2fe', color: '#0284c7',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            flexShrink: 0
                         }}>
                             <Briefcase size={24} />
                         </div>
-                        <div style={{ flex: 1 }}>
-                            <h3 style={{ fontSize: '1.05rem', fontWeight: 600, margin: '0 0 0.25rem' }}>{contact.name}</h3>
-                            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>{contact.specialty}</p>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                            <h3 style={{ fontSize: '1.05rem', fontWeight: 600, margin: '0 0 0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{contact.name}</h3>
+                            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{contact.specialty}</p>
                         </div>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
                             {canManage && (
                                 <button
                                     onClick={() => deleteContact(contact.id)}
+                                    className="contact-action-btn"
                                     style={{
                                         color: '#ef4444', background: '#fee2e2',
                                         border: 'none', borderRadius: '50%',
@@ -111,7 +113,7 @@ export default function ContactsPage() {
                             )}
                             <a
                                 href={`tel:${contact.phone}`}
-                                className="btn btn-primary"
+                                className="btn btn-primary contact-action-btn"
                                 style={{ borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
                             >
                                 <Phone size={20} />

@@ -73,7 +73,7 @@ export default function IncidentForm() {
 
     return (
         <div className="container" style={{ maxWidth: '600px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+            <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Nueva Incidencia</h1>
                 <button className="btn btn-secondary" onClick={() => navigate(-1)}><X size={20} /></button>
             </div>

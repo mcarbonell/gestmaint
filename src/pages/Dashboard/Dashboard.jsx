@@ -139,7 +139,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+            <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Requieren Atención</h2>
                 <button className="btn btn-secondary" onClick={() => navigate('/incidents')} style={{ padding: '0.5rem 1rem' }}>Ver todas</button>
             </div>
@@ -150,8 +150,8 @@ export default function Dashboard() {
                         .filter(i => i.status === 'reported')
                         .slice(0, 5)
                         .map(inc => (
-                            <div key={inc.id} className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1.25rem', borderLeft: '4px solid var(--color-danger)' }}>
-                                <div style={{
+                            <div key={inc.id} className="card incident-list-item" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1.25rem', borderLeft: '4px solid var(--color-danger)' }}>
+                                <div className="incident-icon" style={{
                                     width: '48px',
                                     height: '48px',
                                     background: '#fee2e2',
@@ -164,15 +164,15 @@ export default function Dashboard() {
                                 }}>
                                     <AlertTriangle size={24} />
                                 </div>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: 800, fontSize: '1rem', color: '#1e293b', marginBottom: '0.25rem' }}>
+                                <div className="incident-info" style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontWeight: 800, fontSize: '1rem', color: '#1e293b', marginBottom: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                         {inc.type.toUpperCase()}
                                     </div>
-                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                         Reportado por <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{inc.profiles?.full_name || 'Local'}</span> • {new Date(inc.created_at).toLocaleDateString()}
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <div className="incident-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
                                     <span className={`badge badge-${inc.priority === 'alta' ? 'high' : inc.priority === 'media' ? 'media' : 'baja'}`}>
                                         {inc.priority}
                                     </span>

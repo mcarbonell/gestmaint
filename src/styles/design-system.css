@@ -275,5 +275,218 @@ textarea:focus {
 
   .container {
     padding: 1rem;
+    padding-top: 0.5rem;
+  }
+
+  /* Table Responsive Styles */
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .table-responsive table {
+    min-width: 600px;
+    width: 100%;
+  }
+
+  /* Card-based table for mobile */
+  .table-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .table-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #f1f5f9;
+    padding: 1rem;
+  }
+
+  .table-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .table-card-row:last-child {
+    border-bottom: none;
+  }
+
+  .table-card-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .table-card-value {
+    font-weight: 500;
+    text-align: right;
+  }
+
+  /* Button responsive adjustments */
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  /* Form elements */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+    /* Prevents zoom on iOS */
+  }
+
+  /* Show/hide utilities for responsive design */
+  .mobile-only {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Contact cards responsive */
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .contact-card {
+    padding: 1rem !important;
+  }
+
+  .contact-icon {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .contact-action-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* Page header responsive */
+  .page-header {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: flex-start !important;
+  }
+
+  /* Kanban board responsive */
+  .kanban-board {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: auto !important;
+    gap: 1rem !important;
+  }
+
+  .kanban-column {
+    min-height: 150px !important;
+    max-height: 400px;
+  }
+
+  /* Incident list items responsive */
+  .incident-list-item {
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+    padding: 1rem !important;
+  }
+
+  .incident-list-item .incident-info {
+    width: 100%;
+    order: 3;
+  }
+
+  .incident-list-item .incident-actions {
+    margin-left: auto;
+    order: 2;
+  }
+
+  .incident-list-item .incident-icon {
+    width: 40px !important;
+    height: 40px !important;
+    order: 1;
+  }
+
+  /* Dashboard stats tiles */
+  .stat-tile {
+    padding: 1.25rem !important;
+  }
+
+  .stat-value {
+    font-size: 1.75rem !important;
+  }
+
+  /* Modal/Card adjustments */
+  .card {
+    padding: 1.25rem !important;
+  }
+
+  /* Prevent horizontal overflow */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Incident detail page responsive */
+  .incident-meta-grid {
+    gap: 1rem !important;
+  }
+
+  /* File attachments grid */
+  .file-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Status change buttons */
+  .status-actions {
+    flex-direction: column !important;
+    width: 100%;
+  }
+
+  .status-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Comment form */
+  .comment-form {
+    flex-direction: column !important;
+  }
+
+  .comment-form input {
+    width: 100%;
+  }
+
+  .comment-form button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* History timeline */
+  .history-item {
+    gap: 0.75rem !important;
+  }
+
+  .history-item>div:last-child {
+    min-width: 0;
+  }
+}
+
+/* Desktop view - hide mobile-only elements */
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+
+  .desktop-only {
+    display: block !important;
   }
 }

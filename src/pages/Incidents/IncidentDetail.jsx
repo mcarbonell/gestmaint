@@ -68,7 +68,7 @@ export default function IncidentDetail() {
                     </a>
                 </div>
 
-                <div className="grid-2" style={{ marginBottom: '1.5rem', gap: '2rem' }}>
+                <div className="grid-2 incident-meta-grid" style={{ marginBottom: '1.5rem', gap: '2rem' }}>
                     <div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>Reportado por</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
@@ -93,7 +93,7 @@ export default function IncidentDetail() {
                         <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <FileText size={18} /> Adjuntos ({incident.files.length})
                         </h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                        <div className="file-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                             {incident.files.map((file, index) => {
                                 const { data: { publicUrl } } = supabase.storage.from('incidents').getPublicUrl(file.path);
                                 const isImage = file.type?.startsWith('image/');
@@ -142,7 +142,7 @@ export default function IncidentDetail() {
 
                 {/* Controller Actions */}
                 {user.role === 'controller' && (
-                    <div style={{ borderTop: '1px solid #eee', paddingTop: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    <div className="status-actions" style={{ borderTop: '1px solid #eee', paddingTop: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                         <span style={{ fontSize: '0.9rem', fontWeight: 600, alignSelf: 'center' }}>Cambiar Estado:</span>
                         <button className="btn btn-secondary" onClick={() => handleStatusChange('in_progress')}>En Progreso</button>
                         <button className="btn btn-secondary" onClick={() => handleStatusChange('finalized')}>Finalizar</button>
@@ -158,20 +158,21 @@ export default function IncidentDetail() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2rem' }}>
                     {incident.history?.map((log, index) => (
-                        <div key={index} style={{ display: 'flex', gap: '1rem' }}>
+                        <div key={index} className="history-item" style={{ display: 'flex', gap: '1rem' }}>
                             <div style={{
                                 width: '32px', height: '32px', borderRadius: '50%',
                                 background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '0.8rem', fontWeight: 700, color: '#64748b'
+                                fontSize: '0.8rem', fontWeight: 700, color: '#64748b',
+                                flexShrink: 0
                             }}>
                                 {log.user?.charAt(0) || 'S'}
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem', flexWrap: 'wrap', gap: '0.25rem' }}>
                                     <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{log.user}</span>
                                     <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{new Date(log.date).toLocaleString()}</span>
                                 </div>
-                                <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem', fontSize: '0.95rem' }}>
+                                <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem', fontSize: '0.95rem', wordBreak: 'break-word' }}>
                                     {log.details || log.action}
                                 </div>
                             </div>
@@ -179,7 +180,7 @@ export default function IncidentDetail() {
                     ))}
                 </div>
 
-                <form onSubmit={handleAddComment} style={{ display: 'flex', gap: '1rem' }}>
+                <form onSubmit={handleAddComment} className="comment-form" style={{ display: 'flex', gap: '1rem' }}>
                     <input
                         type="text"
                         placeholder="Añadir comentario o actualización..."
